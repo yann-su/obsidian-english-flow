@@ -106,7 +106,7 @@ test('mobile clears stale or invalid selections and never looks up input fields 
   } finally { await host.close(); }
 });
 
-test('mobile touch action and reading card stay above the keyboard when the visual viewport changes', async () => {
+test('mobile touch action follows the visible top and the reading card stays above the keyboard', async () => {
   const host = await createHost(await bundlePromise, { settings: { model: 'test-model' } }, responder, undefined, undefined, {
     mobile: true, visualViewport: { width: 390, height: 844, offsetTop: 0, offsetLeft: 0 }
   });
@@ -115,10 +115,10 @@ test('mobile touch action and reading card stay above the keyboard when the visu
     Object.defineProperty(win, 'innerWidth', { value: 390, configurable: true });
     Object.defineProperty(win, 'innerHeight', { value: 844, configurable: true });
     select(0, 12); await waitForSelection();
-    assert.equal(control().style.getPropertyValue('--ef-mobile-keyboard-inset'), '0px');
+    assert.equal(control().style.getPropertyValue('--ef-mobile-viewport-top'), '0px');
     const viewport = win.visualViewport;
     viewport.height = 400; viewport.offsetTop = 44; viewport.dispatchEvent(new win.Event('resize'));
-    assert.equal(control().style.getPropertyValue('--ef-mobile-keyboard-inset'), '400px');
+    assert.equal(control().style.getPropertyValue('--ef-mobile-viewport-top'), '44px');
     control().click(); await host.settle();
     const card = doc.querySelector('.ef-popover');
     assert.equal(card.style.width, '366px'); assert.equal(card.style.maxHeight, '376px');

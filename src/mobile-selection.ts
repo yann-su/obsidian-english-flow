@@ -76,9 +76,8 @@ export class MobileSelectionAction {
     }, 120);
   }
   private position(): void {
-    const win = this.doc.defaultView, viewport = win?.visualViewport;
-    const keyboardInset = viewport ? Math.max(0, (win?.innerHeight ?? 0) - viewport.height - viewport.offsetTop) : 0;
-    this.element.style.setProperty('--ef-mobile-keyboard-inset', `${keyboardInset}px`);
+    const viewportTop = Math.max(0, this.doc.defaultView?.visualViewport?.offsetTop ?? 0);
+    this.element.style.setProperty('--ef-mobile-viewport-top', `${viewportTop}px`);
   }
   clear(): void {
     this.current = null; this.pressed = null; this.element.hidden = true;

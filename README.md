@@ -1,12 +1,12 @@
 # English Reading Flow
 
-Obsidian 英语学习插件，**0.1.9 测试版**。
+Obsidian 英语学习插件，**0.1.10 测试版**。
 
-[GitHub 仓库](https://github.com/yann-su/obsidian-english-flow) · [下载 0.1.9 安装包](https://github.com/yann-su/obsidian-english-flow/releases/download/0.1.9/english-reading-flow-0.1.9.zip) · [版本说明与全部下载](https://github.com/yann-su/obsidian-english-flow/releases/tag/0.1.9)
+[GitHub 仓库](https://github.com/yann-su/obsidian-english-flow) · [下载 0.1.10 安装包](https://github.com/yann-su/obsidian-english-flow/releases/download/0.1.10/english-reading-flow-0.1.10.zip) · [版本说明与全部下载](https://github.com/yann-su/obsidian-english-flow/releases/tag/0.1.10)
 
 在阅读笔记时选中英语，获取语境讲解，收藏想掌握的表达，换情境练习，再通过每日复习主动回忆。面向日常阅读、口语表达准备与写作。
 
-0.1.9：iPhone / iPad / Android 长按选中英语后，点右下方「讲解选文」展开同一张讲解卡片，无需外接键盘。按钮只在有效英语选区存在时出现，不会自动请求讲解、音标或声音；点按时保留选文快照，避免 iOS 收起系统选区后丢失文字。按钮避开底部工具栏与键盘，讲解卡片按键盘上方的可见区域调整位置。桌面继续使用 `⌘R`。
+0.1.10：iPhone / iPad / Android 长按选中英语后，点右上角「讲解选文」展开同一张讲解卡片，无需外接键盘。按钮只在有效英语选区存在时出现，不会自动请求讲解、音标或声音；点按时保留选文快照，避免 iOS 收起系统选区后丢失文字。按钮位于顶部工具栏下方，并避开顶部安全区域；讲解卡片按键盘上方的可见区域调整位置。桌面继续使用 `⌘R`。
 
 0.1.8：句子和段落的卡片优先直接展示完整「中文翻译」；「意思讲解」单独折叠。可展开「怎么译出来的」，查看英文分句与中文译法及简短说明；不再用概述代替译文。默认关闭选中即讲解，选择单词后按 `⌘R` 才展开卡片，单纯选中不发起讲解、音标或发音请求。发音默认使用有道公开语音，提供英音与美音，不需要额外 API Key。请求失败时切换备用公开朗读。音频通过 Obsidian 请求下载并校验后，在本机从 Blob 播放，避免直接把远端地址交给播放器；已下载音频在本次会话中缓存。音标加载不再重建发音按钮，播放中的停止操作保持可用。
 
@@ -18,7 +18,7 @@ Obsidian 英语学习插件，**0.1.9 测试版**。
 
 需要 **Obsidian 1.11.5 或更新版本**，启用社区插件。
 
-1. 在 [Releases](https://github.com/yann-su/obsidian-english-flow/releases/tag/0.1.9) 下载并解压 `english-reading-flow-0.1.9.zip`；GitHub 自动生成的 Source code 压缩包需要自行构建，不能直接安装。
+1. 在 [Releases](https://github.com/yann-su/obsidian-english-flow/releases/tag/0.1.10) 下载并解压 `english-reading-flow-0.1.10.zip`；GitHub 自动生成的 Source code 压缩包需要自行构建，不能直接安装。
 2. 将其中的 `english-reading-flow` 文件夹放入你的笔记库配置目录：
 
    ```text
@@ -81,7 +81,7 @@ python3 scripts/install-local.py "/你的笔记库绝对路径"
 
 在 Markdown 中选中一个词、短语、句子或段落，再手动触发讲解。单纯选中不会自动查询：
 
-- **iPhone / iPad / Android**：长按选中英语，再点右下方「讲解选文」。支持 Markdown 编辑选区和阅读视图 / PDF 文字选区。无需开启「选中即讲解」。
+- **iPhone / iPad / Android**：长按选中英语，再点右上角「讲解选文」。支持 Markdown 编辑选区和阅读视图 / PDF 文字选区。无需开启「选中即讲解」。
 - 右键 →「讲解选中的英语」。
 - 或命令面板 →「English Reading Flow: 讲解选中的英语」。
 - 默认快捷键：macOS `⌘R`，Windows/Linux `Ctrl+R`。可在 Obsidian 快捷键设置中修改；用户已有的自定义快捷键优先。

@@ -1,7 +1,7 @@
 {
   "id": "english-reading-flow",
   "name": "English Reading Flow",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "minAppVersion": "1.11.5",
   "description": "选中英语讲解、收藏表达、迁移练习与每日复习；学习记录保存为可同步的 Markdown。",
   "author": "English Reading Flow contributors",

@@ -28,7 +28,7 @@
   position: fixed;
   z-index: var(--layer-popover, 300);
   right: max(16px, env(safe-area-inset-right));
-  bottom: calc(80px + env(safe-area-inset-bottom) + var(--ef-mobile-keyboard-inset, 0px));
+  top: calc(56px + env(safe-area-inset-top) + var(--ef-mobile-viewport-top, 0px));
   min-height: 44px;
   padding: 10px 16px;
   border: 1px solid var(--background-modifier-border);

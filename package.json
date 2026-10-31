@@ -1,0 +1,36 @@
+{
+  "name": "english-reading-flow",
+  "version": "0.1.8",
+  "private": true,
+  "type": "module",
+  "description": "Contextual English explanations, expression collection, transfer practice and daily review in Obsidian.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yann-su/obsidian-english-flow.git"
+  },
+  "homepage": "https://github.com/yann-su/obsidian-english-flow#readme",
+  "bugs": {
+    "url": "https://github.com/yann-su/obsidian-english-flow/issues"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "build": "npm run check && node esbuild.config.mjs",
+    "package": "npm run build && node scripts/package.mjs",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@noble/hashes": "1.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "esbuild": "0.25.12",
+    "fflate": "0.8.3",
+    "js-yaml": "4.1.1",
+    "jsdom": "28.1.0",
+    "obsidian": "1.14.4",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

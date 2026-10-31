@@ -6,6 +6,7 @@ import { LearningStore, type FileStore } from './storage';
 import { ExplanationPopover, FlowSettingsTab, FlowSettingsModal, FlowView, VIEW_TYPE, type ExplanationAnchor } from './ui';
 import { PronunciationClient, SpeechPlayer } from './pronunciation';
 import { PublicAudioClient } from './public-audio';
+import { MobileSelectionAction, type MobileReadingSelection } from './mobile-selection';
 
 export default class EnglishFlowPlugin extends Plugin {
   declare settings: FlowSettings;
@@ -19,6 +20,7 @@ export default class EnglishFlowPlugin extends Plugin {
   private lastPresentedSelection = '';
   private readingSelection: Source | null = null;
   private readingAnchor: ExplanationAnchor | null = null;
+  private mobileSelectionAction: MobileSelectionAction | null = null;
   async onload(): Promise<void> {
     let validSettings = true;
     try { this.settings = loadSettings(await this.loadData()); }
@@ -45,7 +47,7 @@ export default class EnglishFlowPlugin extends Plugin {
       if (checking) return true;
       this.cancelAutoExplain();
       const source = this.selectedSource() ?? this.readingSelection;
-      if (!source || source.path !== this.app.workspace.getActiveFile()?.path) { new Notice('请先选中要讲解的单词、句子或段落，再按快捷键。'); return true; }
+      if (!source || source.path !== this.app.workspace.getActiveFile()?.path) { new Notice(Platform.isMobile ? '请先长按选中英语，再点「讲解选文」或执行本命令。' : '请先选中要讲解的单词、句子或段落，再按快捷键。'); return true; }
       void this.explainSource(source).catch(e => this.report(e));
       return true;
     } });
@@ -100,9 +102,26 @@ export default class EnglishFlowPlugin extends Plugin {
     this.registerDomEvent(document, 'pointerdown', event => { this.selecting = true; this.suppressSelectionChange = event.metaKey || event.ctrlKey || event.altKey; this.cancelAutoExplain(); });
     this.registerDomEvent(document, 'pointercancel', () => { this.selecting = false; this.cancelAutoExplain(); });
     this.registerDomEvent(document, 'wheel', () => this.cancelAutoExplain(), { capture: true, passive: true });
-    this.registerEvent(this.app.workspace.on('file-open', () => { this.cancelAutoExplain(); this.readingSelection = null; this.readingAnchor = null; this.readingPopover?.close(); }));
+    this.registerEvent(this.app.workspace.on('file-open', () => { this.cancelAutoExplain(); this.mobileSelectionAction?.clear(); this.readingSelection = null; this.readingAnchor = null; this.readingPopover?.close(); }));
+    if (Platform.isMobile) this.mobileSelectionAction = new MobileSelectionAction(document, () => this.captureMobileSelection(), ({ source, anchor }) => {
+      if (source.path !== this.app.workspace.getActiveFile()?.path) return;
+      void this.explainSource(source, anchor).catch(e => this.report(e));
+    });
   }
-  onunload(): void { this.cancelAutoExplain(); this.readingPopover?.close(); this.speech?.stop(); }
+  onunload(): void { this.cancelAutoExplain(); this.mobileSelectionAction?.destroy(); this.mobileSelectionAction = null; this.readingPopover?.close(); this.speech?.stop(); }
+  private captureMobileSelection(): MobileReadingSelection | null {
+    const view = this.app.workspace.getActiveViewOfType(FileView);
+    if (!view?.file || this.readingPopover) return null;
+    const doc = view.containerEl.ownerDocument, selection = doc.getSelection();
+    const excluded = 'input, textarea, button, .view-header, .inline-title, .ef-popover, .modal, .modal-container';
+    const target = selection?.anchorNode?.nodeType === Node.ELEMENT_NODE ? selection.anchorNode as Element : selection?.anchorNode?.parentElement;
+    if (doc.querySelector('.modal-container, .modal') || doc.activeElement?.closest(excluded) || target?.closest(excluded)) return null;
+    if (selection?.toString().trim() && selection.anchorNode && !view.containerEl.contains(selection.anchorNode)) return null;
+    const source = this.selectedSource();
+    if (!source || !/[a-z]/i.test(source.quote)) { this.readingSelection = null; this.readingAnchor = null; return null; }
+    this.readingSelection = source;
+    return { source, anchor: this.selectionAnchor() };
+  }
   private cancelAutoExplain(): void { if (this.selectionTimer !== undefined) window.clearTimeout(this.selectionTimer); this.selectionTimer = undefined; }
   private queueAutoExplain(target: Node, explicitSelection = true): void {
     this.cancelAutoExplain();
@@ -208,6 +227,7 @@ export default class EnglishFlowPlugin extends Plugin {
   }
   private openReadingPopover(source: Source, anchor: ExplanationAnchor): ExplanationPopover {
     this.cancelAutoExplain();
+    this.mobileSelectionAction?.clear();
     this.readingPopover?.close();
     const popover = new ExplanationPopover(this, anchor, source, () => { if (this.readingPopover === popover) this.readingPopover = null; });
     this.readingPopover = popover;

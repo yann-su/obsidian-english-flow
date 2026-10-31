@@ -581,11 +581,15 @@ export class ExplanationPopover {
     doc.addEventListener('keydown', key, true);
     doc.addEventListener('scroll', scroll, true);
     win?.addEventListener('resize', resize);
+    win?.visualViewport?.addEventListener('resize', resize);
+    win?.visualViewport?.addEventListener('scroll', resize);
     this.disposers = [
       () => doc.removeEventListener('pointerdown', pointer, true),
       () => doc.removeEventListener('keydown', key, true),
       () => doc.removeEventListener('scroll', scroll, true),
-      () => win?.removeEventListener('resize', resize)
+      () => win?.removeEventListener('resize', resize),
+      () => win?.visualViewport?.removeEventListener('resize', resize),
+      () => win?.visualViewport?.removeEventListener('scroll', resize)
     ];
     const Observer = win?.ResizeObserver;
     if (Observer) {
@@ -598,7 +602,9 @@ export class ExplanationPopover {
   private position(): void {
     if (!this.opened) return;
     const win = this.anchor.document.defaultView;
-    const viewportWidth = win?.innerWidth ?? 1024, viewportHeight = win?.innerHeight ?? 768;
+    const viewport = win?.visualViewport;
+    const viewportWidth = viewport?.width ?? win?.innerWidth ?? 1024, viewportHeight = viewport?.height ?? win?.innerHeight ?? 768;
+    const viewportLeft = viewport?.offsetLeft ?? 0, viewportTop = viewport?.offsetTop ?? 0;
     const width = Math.max(0, Math.min(this.element.dataset.kind === 'word' ? 380 : 440, viewportWidth - 24));
     this.element.style.width = `${width}px`;
     this.element.style.maxHeight = `${Math.max(80, viewportHeight - 24)}px`;
@@ -606,12 +612,12 @@ export class ExplanationPopover {
     try { rect = this.anchor.rect(); }
     catch { rect = { left: 24, right: 24, top: 80, bottom: 100 }; }
     const height = Math.min(this.element.getBoundingClientRect().height || 320, Math.max(80, viewportHeight - 24));
-    const left = Math.max(12, Math.min(Number.isFinite(rect.left) ? rect.left : 24, viewportWidth - width - 12));
+    const left = Math.max(viewportLeft + 12, Math.min(Number.isFinite(rect.left) ? rect.left : viewportLeft + 24, viewportLeft + viewportWidth - width - 12));
     const anchorBottom = Number.isFinite(rect.bottom) ? rect.bottom : 100;
     const anchorTop = Number.isFinite(rect.top) ? rect.top : anchorBottom;
     let top = anchorBottom + 8;
-    if (top + height > viewportHeight - 12) top = anchorTop - height - 8;
-    top = Math.max(12, Math.min(top, viewportHeight - height - 12));
+    if (top + height > viewportTop + viewportHeight - 12) top = anchorTop - height - 8;
+    top = Math.max(viewportTop + 12, Math.min(top, viewportTop + viewportHeight - height - 12));
     this.element.style.left = `${left}px`; this.element.style.top = `${top}px`;
   }
   close(restoreFocus = false): void {
@@ -638,7 +644,7 @@ function settingsForm(app: App, plugin: EnglishFlowPlugin, el: HTMLElement): voi
   const draft: FlowSettings = { ...plugin.settings };
   new Setting(el).setName('学习目录').setDesc('普通 Markdown 目录，由现有 GitHub 插件同步。修改目录不会移动旧数据。')
     .addText(c => c.setValue(draft.folder).onChange(v => { draft.folder = v; }));
-  new Setting(el).setName('选中即讲解').setDesc('默认关闭。选中英语后按 ⌘R 才展开讲解；开启后才会自动弹出。')
+  new Setting(el).setName('选中即讲解').setDesc('默认关闭。手机选中英语后点「讲解选文」，电脑按 ⌘R；开启后才会自动查询。')
     .addToggle(c => c.setValue(draft.autoExplain).onChange(v => { draft.autoExplain = v; }));
   new Setting(el).setName('API Base URL').setDesc('兼容 Chat Completions 的服务，例如 https://api.openai.com/v1；也可填写完整接口地址。')
     .addText(c => c.setValue(draft.endpoint).onChange(v => { draft.endpoint = v; }));

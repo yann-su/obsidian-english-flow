@@ -1,6 +1,6 @@
 {
   "name": "english-reading-flow",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": true,
   "type": "module",
   "description": "Contextual English explanations, expression collection, transfer practice and daily review in Obsidian.",

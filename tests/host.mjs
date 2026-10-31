@@ -5,12 +5,13 @@ import yaml from 'js-yaml';
 
 // A deliberately small Obsidian API host. It executes the actual bundled plugin UI,
 // including its command registration, vault events, persistence and HTTP adapter.
-export async function createHost(bundle, shared = {}, responder = async () => { throw new Error('Network is disabled in this host'); }, dictionaryResponder = async () => ({ status: 404, text: '{}' }), audioResponder = async () => { const bytes=new Uint8Array(128); bytes.set([0x49,0x44,0x33]); return {status:200,headers:{'content-type':'audio/mpeg'},arrayBuffer:bytes.buffer}; }) {
+export async function createHost(bundle, shared = {}, responder = async () => { throw new Error('Network is disabled in this host'); }, dictionaryResponder = async () => ({ status: 404, text: '{}' }), audioResponder = async () => { const bytes=new Uint8Array(128); bytes.set([0x49,0x44,0x33]); return {status:200,headers:{'content-type':'audio/mpeg'},arrayBuffer:bytes.buffer}; }, options = {}) {
   const dom = new JSDOM('<main id="app"></main>', { url: 'https://obsidian.invalid', runScripts: 'outside-only' });
   const win = dom.window, document = win.document;
   Object.defineProperty(win, 'crypto', { value: webcrypto });
   win.TextEncoder = TextEncoder; win.TextDecoder = TextDecoder;
   win.Range.prototype.getBoundingClientRect = () => ({ left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 });
+  if (options.visualViewport) Object.defineProperty(win, 'visualViewport', { value: Object.assign(new win.EventTarget(), options.visualViewport) });
   const state = { files: new Map(), folders: new Set(), settings: null, ...shared };
   const notices = [], requests = [], pronunciationRequests = [], audioRequests = [], commands = new Map(), factories = new Map(), leaves = [];
   const audioObjects=new Map(); let audioSequence=0;
@@ -114,7 +115,7 @@ export async function createHost(bundle, shared = {}, responder = async () => { 
   class Notice { constructor(message) { notices.push(message); } }
   const obsidian = {
     Plugin, ItemView, FileView: ItemView, ButtonComponent, Setting, SecretComponent, Modal, PluginSettingTab, Notice, WorkspaceLeaf, TFile,
-    Platform: { isMobile: false }, parseYaml: yaml.load, stringifyYaml: value => yaml.dump(value, { noRefs: true, lineWidth: -1 }),
+    Platform: { isMobile: options.mobile ?? false }, parseYaml: yaml.load, stringifyYaml: value => yaml.dump(value, { noRefs: true, lineWidth: -1 }),
     setIcon: (element, name) => { element.setAttribute('data-icon', name); },
     requestUrl: async request => {
       if (request.url.startsWith('https://api.dictionaryapi.dev/')) { pronunciationRequests.push(request); return dictionaryResponder(request); }
@@ -143,6 +144,6 @@ export async function createHost(bundle, shared = {}, responder = async () => { 
     if (!el || el.disabled) throw new Error('Editable answer field not found');
     el.value = value; el.dispatchEvent(new win.Event('input', { bubbles: true }));
   }
-  async function close() { if (plugin.readingPopover) plugin.readingPopover.close(); else if (view()) await view().onClose(); dom.window.close(); }
+  async function close() { if (plugin.readingPopover) plugin.readingPopover.close(); else if (view()) await view().onClose(); plugin.onunload(); dom.window.close(); }
   return { plugin, app, state, notices, requests, pronunciationRequests, audioRequests, audioObjects, commands, dom, view, click, input, settle, close };
 }

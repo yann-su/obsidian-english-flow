@@ -1,10 +1,12 @@
 # English Reading Flow
 
-Obsidian 英语学习插件，**0.1.8 测试版**。
+Obsidian 英语学习插件，**0.1.9 测试版**。
 
-[GitHub 仓库](https://github.com/yann-su/obsidian-english-flow) · [下载 0.1.8 安装包](https://github.com/yann-su/obsidian-english-flow/releases/download/0.1.8/english-reading-flow-0.1.8.zip) · [版本说明与全部下载](https://github.com/yann-su/obsidian-english-flow/releases/tag/0.1.8)
+[GitHub 仓库](https://github.com/yann-su/obsidian-english-flow) · [下载 0.1.9 安装包](https://github.com/yann-su/obsidian-english-flow/releases/download/0.1.9/english-reading-flow-0.1.9.zip) · [版本说明与全部下载](https://github.com/yann-su/obsidian-english-flow/releases/tag/0.1.9)
 
 在阅读笔记时选中英语，获取语境讲解，收藏想掌握的表达，换情境练习，再通过每日复习主动回忆。面向日常阅读、口语表达准备与写作。
+
+0.1.9：iPhone / iPad / Android 长按选中英语后，点右下方「讲解选文」展开同一张讲解卡片，无需外接键盘。按钮只在有效英语选区存在时出现，不会自动请求讲解、音标或声音；点按时保留选文快照，避免 iOS 收起系统选区后丢失文字。按钮避开底部工具栏与键盘，讲解卡片按键盘上方的可见区域调整位置。桌面继续使用 `⌘R`。
 
 0.1.8：句子和段落的卡片优先直接展示完整「中文翻译」；「意思讲解」单独折叠。可展开「怎么译出来的」，查看英文分句与中文译法及简短说明；不再用概述代替译文。默认关闭选中即讲解，选择单词后按 `⌘R` 才展开卡片，单纯选中不发起讲解、音标或发音请求。发音默认使用有道公开语音，提供英音与美音，不需要额外 API Key。请求失败时切换备用公开朗读。音频通过 Obsidian 请求下载并校验后，在本机从 Blob 播放，避免直接把远端地址交给播放器；已下载音频在本次会话中缓存。音标加载不再重建发音按钮，播放中的停止操作保持可用。
 
@@ -16,7 +18,7 @@ Obsidian 英语学习插件，**0.1.8 测试版**。
 
 需要 **Obsidian 1.11.5 或更新版本**，启用社区插件。
 
-1. 在 [Releases](https://github.com/yann-su/obsidian-english-flow/releases/tag/0.1.8) 下载并解压 `english-reading-flow-0.1.8.zip`；GitHub 自动生成的 Source code 压缩包需要自行构建，不能直接安装。
+1. 在 [Releases](https://github.com/yann-su/obsidian-english-flow/releases/tag/0.1.9) 下载并解压 `english-reading-flow-0.1.9.zip`；GitHub 自动生成的 Source code 压缩包需要自行构建，不能直接安装。
 2. 将其中的 `english-reading-flow` 文件夹放入你的笔记库配置目录：
 
    ```text
@@ -77,13 +79,16 @@ python3 scripts/install-local.py "/你的笔记库绝对路径"
 
 ### 选中内容讲解
 
-在 Markdown **编辑模式或实时预览模式**选中一个词、短语、句子或段落，按 `⌘R` 展开卡片。单纯选中不会自动查询。也可以：
+在 Markdown 中选中一个词、短语、句子或段落，再手动触发讲解。单纯选中不会自动查询：
 
+- **iPhone / iPad / Android**：长按选中英语，再点右下方「讲解选文」。支持 Markdown 编辑选区和阅读视图 / PDF 文字选区。无需开启「选中即讲解」。
 - 右键 →「讲解选中的英语」。
 - 或命令面板 →「English Reading Flow: 讲解选中的英语」。
 - 默认快捷键：macOS `⌘R`，Windows/Linux `Ctrl+R`。可在 Obsidian 快捷键设置中修改；用户已有的自定义快捷键优先。
 
-PDF 或 Markdown 阅读视图：用鼠标选择文字后按 `⌘R`，或使用同一个命令。只有手动开启「选中即讲解」后才会自动展开；自动触发有短暂去抖，快速更换选区只讲解最后一次选中的内容。输入框、非英语选择、按住 Command/Ctrl/Alt 的选择不会自动查询。PDF 只发送选中的文字，不提取整份文件。收藏保留 PDF 路径，再次打开来源时跳转到该文件，暂不定位具体页码。
+手机也可将「English Reading Flow: 讲解选中的英语」加到 Obsidian 的移动工具栏：设置 → Interface（界面）→ Configure mobile toolbar → Add a command。官方操作说明见 [Obsidian 移动端帮助](https://obsidian.md/help/mobile)。这是可选入口，使用「讲解选文」不需要额外配置。
+
+PDF 或 Markdown 阅读视图：电脑用鼠标选择文字后按 `⌘R`；手机长按选中后点「讲解选文」，或使用同一个命令。只有手动开启「选中即讲解」后才会自动展开；自动触发有短暂去抖，快速更换选区只讲解最后一次选中的内容。输入框、非英语选择、按住 Command/Ctrl/Alt 的选择不会自动查询。PDF 只发送选中的文字，不提取整份文件。收藏保留 PDF 路径，再次打开来源时跳转到该文件，暂不定位具体页码。
 
 每次支持 1～8000 字符。讲解卡片立即在选区附近显示等待状态，返回后优先展示当前语境的意思。卡片会根据窗口边缘调整到选区上方或下方，原文不会跳转；选择单词时显示词义、用法和例句，选择句子时先展示完整中文译文，再按需展开意思讲解与分句对应翻译，并提取其中 1～3 个重点词或短语。词汇详情和句子结构按需展开。卡片内可收藏、练习，并用「返回讲解」返回同一张卡片。按 Esc、点空白处或滚动原文即可收起，卡片内部滚动不会关闭。
 
@@ -170,6 +175,6 @@ npm run smoke
 npm run package
 ```
 
-产物位于 `dist/` 和 `release/`。测试使用实际打包插件及模拟 Obsidian API / HTTP 服务验证交互，不代表真实设备已通过验证。两个 Bridge 兼容测试在相邻目录有 `obsidian-github-bridge` 源码时运行；独立源码包中自动跳过，其余测试独立运行。更多结果见 `TEST_REPORT.md`。
+产物位于 `dist/` 和 `release/`。测试使用实际打包插件及模拟 Obsidian API / HTTP 服务验证交互，不代表真实设备已通过验证。Bridge 集成测试在相邻目录有 `obsidian-github-bridge` 源码时运行；独立源码包中自动跳过，其余测试独立运行。更多结果见 `TEST_REPORT.md`。
 
 GitHub 发布使用 `.github/workflows/release.yml`。推送与 `manifest.json`、`package.json` 一致的版本标签（例如 `0.1.8`，不加 `v`）后，会先测试、构建和检查离线流程，再上传三个运行文件、安装包、源码包及校验文件，发布为测试版。已有标签可从 Actions 的 **Release plugin → Run workflow** 手动指定。已有的发行说明草稿会保留；工作流不会覆盖已发布的版本。

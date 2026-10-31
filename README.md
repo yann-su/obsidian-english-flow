@@ -171,3 +171,5 @@ npm run package
 ```
 
 产物位于 `dist/` 和 `release/`。测试使用实际打包插件及模拟 Obsidian API / HTTP 服务验证交互，不代表真实设备已通过验证。两个 Bridge 兼容测试在相邻目录有 `obsidian-github-bridge` 源码时运行；独立源码包中自动跳过，其余测试独立运行。更多结果见 `TEST_REPORT.md`。
+
+GitHub 发布使用 `.github/workflows/release.yml`。推送与 `manifest.json`、`package.json` 一致的版本标签（例如 `0.1.8`，不加 `v`）后，会先测试、构建和检查离线流程，再上传三个运行文件、安装包、源码包及校验文件，发布为测试版。已有标签可从 Actions 的 **Release plugin → Run workflow** 手动指定。已有的发行说明草稿会保留；工作流不会覆盖已发布的版本。
